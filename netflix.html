@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Netflix Clone — HTML & CSS</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    /* ----------------------
+       Variables & Reset
+       ---------------------- */
+    :root{
+      --bg:#0b0b0b;
+      --card:#141414;
+      --muted:#8b8b8b;
+      --accent:#e50914; /* classic Netflix red */
+      --glass: rgba(255,255,255,0.04);
+      --radius:12px;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:linear-gradient(180deg,#060606 0%, #0b0b0b 40%);
+      color:#fff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      font-size:16px;
+    }
+
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+
+    /* ----------------------
+       Header / Nav
+       ---------------------- */
+    .site-header{
+      position:fixed;top:0;left:0;right:0;z-index:60;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 28px;
+      background:linear-gradient(180deg, rgba(11,11,11,0.9), rgba(11,11,11,0.45));
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .brand{display:flex;align-items:center;gap:14px}
+    .logo{
+      width:110px;height:32px;background:var(--accent);font-weight:800;display:flex;align-items:center;justify-content:center;border-radius:4px;
+      letter-spacing:1px;font-size:18px;color:#fff
+    }
+    nav ul{display:flex;gap:18px;align-items:center;margin:0;padding:0;list-style:none}
+    nav a{color:#ddd;font-weight:500;font-size:14px}
+    .actions{display:flex;gap:12px;align-items:center}
+    .pill{padding:6px 10px;border-radius:6px;background:var(--glass);font-size:14px}
+    .profile{width:36px;height:36px;border-radius:6px;overflow:hidden;background:#222;display:inline-block}
+
+    /* ----------------------
+       Hero
+       ---------------------- */
+    .hero{
+      margin-top:72px; /* header height */
+      min-height:62vh;
+      display:flex;align-items:flex-end;padding:48px 48px 80px;background-image:linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,0.7));
+      background-size:cover;background-position:center center;
+      position:relative;
+    }
+    /* placeholder poster/background */
+    .hero::before{
+      content:'';position:absolute;inset:0;background-image:url('https://via.placeholder.com/1400x700?text=Featured+Show');background-size:cover;background-position:center;filter:brightness(0.45) saturate(1.1);z-index:0;border-bottom-right-radius:28px;border-bottom-left-radius:28px;
+    }
+    .hero-content{position:relative;z-index:2;max-width:1100px}
+    .kicker{display:inline-block;background:rgba(0,0,0,0.5);padding:6px 8px;border-radius:6px;margin-bottom:12px;color:var(--muted);font-weight:600}
+    .hero-title{font-size:48px;margin:6px 0 12px;letter-spacing:-1px}
+    .hero-desc{max-width:70%;color:var(--muted);line-height:1.5}
+    .hero-cta{margin-top:18px;display:flex;gap:12px}
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border-radius:8px;font-weight:700;cursor:pointer}
+    .btn-play{background:#fff;color:#000}
+    .btn-info{background:rgba(255,255,255,0.12);color:#fff}
+
+    /* ----------------------
+       Rows / Grid
+       ---------------------- */
+    .container{padding:26px 40px}
+    .row{margin-bottom:28px}
+    .row h3{margin:6px 0 12px}
+    .cards{
+      display:grid;grid-auto-flow:column;grid-auto-columns:220px;gap:12px;padding-bottom:6px;overflow-x:auto;scroll-snap-type:x proximity
+    }
+    .card{background:var(--card);border-radius:8px;overflow:hidden;min-height:320px;box-shadow:0 6px 20px rgba(0,0,0,0.55);position:relative;cursor:pointer;transform:scale(1);transition:transform .18s ease, box-shadow .18s ease}
+    .card img{width:100%;height:320px;object-fit:cover}
+    .card:hover{transform:translateY(-8px) scale(1.03);box-shadow:0 14px 40px rgba(0,0,0,0.7)}
+    .card .meta{padding:10px 12px}
+    .card .meta h4{margin:0;font-size:15px}
+    .card .meta p{margin:6px 0 0;color:var(--muted);font-size:13px}
+
+    /* make rows wrap on small screens */
+    @media (max-width:900px){
+      .hero-title{font-size:36px}
+      .cards{grid-auto-columns:160px}
+      .card img{height:240px}
+    }
+    @media (max-width:600px){
+      .site-header{padding:10px 14px}
+      .hero{padding:26px 18px 60px}
+      .hero-desc{max-width:100%}
+      .cards{grid-auto-columns:140px}
+      .card img{height:200px}
+    }
+
+    /* scrollbar hygiene for the horizontal scrollers */
+    .cards::-webkit-scrollbar{height:10px}
+    .cards::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:10px}
+
+    /* small utility */
+    .muted{color:var(--muted)}
+
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="brand">
+      <div class="logo">NETFLIX</div>
+      <nav>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">TV Shows</a></li>
+          <li><a href="#">Movies</a></li>
+          <li><a href="#">Latest</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="actions">
+      <div class="pill">Kids</div>
+      <div class="pill muted">English</div>
+      <div class="profile">
+        <img src="https://via.placeholder.com/36x36?text=H" alt="profile">
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <div class="kicker">Netflix Original</div>
+        <h1 class="hero-title">Featured Title</h1>
+        <p class="hero-desc">A short description of the featured show or movie. This is a placeholder to show how a Netflix-like hero section looks — big, bold and cinematic.</p>
+        <div class="hero-cta">
+          <a class="btn btn-play" href="#">▶ Play</a>
+          <a class="btn btn-info" href="#">ℹ More Info</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="container">
+      <!-- Row: Trending Now -->
+      <div class="row">
+        <h3>Trending Now</h3>
+        <div class="cards">
+          <!-- repeat card -->
+          <article class="card">
+            <img src="https://via.placeholder.com/220x320?text=Poster+1" alt="Poster 1">
+            <div class="meta">
+              <h4>Title One</h4>
+              <p class="muted">2024 • Action</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <img src="https://via.placeholder.com/220x320?text=Poster+2" alt="Poster 2">
+            <div class="meta">
+              <h4>Title Two</h4>
+              <p class="muted">2023 • Drama</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <img src="https://via.placeholder.com/220x320?text=Poster+3" alt="Poster 3">
+            <div class="meta">
+              <h4>Title Three</h4>
+              <p class="muted">2022 • Comedy</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <img src="https://via.placeholder.com/220x320?text=Poster+4" alt="Poster 4">
+            <div class="meta">
+              <h4>Title Four</h4>
+              <p class="muted">2021 • Thriller</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <img src="https://via.placeholder.com/220x320?text=Poster+5" alt="Poster 5">
+            <div class="meta">
+              <h4>Title Five</h4>
+              <p class="muted">2020 • Documentary</p>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <!-- Row: New Releases -->
+      <div class="row">
+        <h3>New Releases</h3>
+        <div class="cards">
+          <article class="card">
+            <img src="https://via.placeholder.com/220x320?text=Poster+A" alt="Poster A">
+            <div class="meta">
+              <h4>New A</h4>
+              <p class="muted">2025 • Sci-Fi</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <img src="https://via.placeholder.com/220x320?text=Poster+B" alt="Poster B">
+            <div class="meta">
+              <h4>New B</h4>
+              <p class="muted">2025 • Romance</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <img src="https://via.placeholder.com/220x320?text=Poster+C" alt="Poster C">
+            <div class="meta">
+              <h4>New C</h4>
+              <p class="muted">2025 • Horror</p>
+            </div>
+          </article>
+
+          <!-- add more as needed -->
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- NOTE: This file purposely keeps JS out — it's an HTML + CSS replica. Add JS for search, modals, and play behaviour. -->
+
+</body>
+</html>
