@@ -1,2 +1,0 @@
-# Netflix
-My first project
